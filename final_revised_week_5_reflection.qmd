@@ -1,0 +1,84 @@
+---
+title: "Week 5 Reflection"
+format: pdf
+author: Chhiyue Zhuang, Wei Wang
+---
+
+```{r}
+library(haven)
+library(labelled)
+library(tidyverse)
+ipums_data <- read_csv("usa_00004.csv.gz")
+
+ipums_data <- ipums_data |>
+  select(STATEICP, EDUCD) |>
+  rename(stateicp=STATEICP, educd = EDUCD) |>
+  to_factor()
+```
+
+### Task:
+
+Using the provided codebook, determine the number of respondents from each state (STATEICP) whose highest educational attainment was a doc degree (EDUC). Create a column in a tibble reflecting this.
+
+```{r}
+doc_counts <- ipums_data |>
+  filter(educd == 116) |>
+  group_by(stateicp) |>
+  summarise(doc_count = n()) |>
+  ungroup()
+
+doc_counts
+```
+
+### Instructions for Data Access:
+
+To obtain the data from IPUMS USA:
+
+1.  Visit the IPUMS USA website and select "IPUMS USA."
+2.  Click "Get Data," and under "SELECT SAMPLE," choose "2022 ACS."
+3.  For state-level data, go to "HOUSEHOLD" → "GEOGRAPHIC" and add "STATEICP" to your cart.
+4.  For individual-level data, navigate to "PERSON" and add "EDUC" to the cart.
+5.  Review your cart and click "CREATE DATA EXTRACT." Ensure the data format is set to ".dta."
+6.  Submit the extract, log in, or create an account, and you'll receive an email once the data is ready.
+7.  Download and save the data extract locally (e.g., "usa_00004.dta") for analysis in R.
+
+------------------------------------------------------------------------
+
+### Your estimates and the act number of respondents
+
+```{r}
+total_respondents_california <- 391171
+
+doc_respondents_california <- doc_counts |>
+  filter(stateicp == 71) |>
+  pull(doc_count)
+
+doc_ratio_california <- doc_respondents_california / total_respondents_california
+
+est_total_counts <- doc_counts |>
+  mutate(est_total = doc_count / doc_ratio_california)
+
+act_cnt <- ipums_data |>
+  group_by(stateicp) |>
+  summarise(act_total = n()) |>  
+  ungroup()
+
+contrast <- doc_counts |>
+  left_join(act_cnt, by = "stateicp") |>
+  left_join(est_total_counts, by = "stateicp") |>
+  select(stateicp, act_total, est_total)
+
+contrast
+```
+
+### Reasons for Differences Between est and act Respondent Counts
+
+The differences between the est and act respondent counts in each state using the ratio estimators method arise due to several factors. One key reason is the assumption of similarity inherent in the ratio estimator approach. This method presumes that the proportion of individuals with doc degrees in California is representative of the proportions in other states. However, the reality is that educational attainment varies significantly across states, influenced by differing demographics, economic opportunities, and educational infrastructure. Such state-level differences result in notable discrepancies between est and act respondent numbers.
+
+Another factor is sampling variability. Estimates derived from sample data, as opposed to a full population census, are subject to random sampling variability. This variability can affect the calculated ratio, which in turn impacts the accuracy of the est respondent counts. Since sample data inherently includes some degree of randomness, the estimates may not always align closely with the act values.
+
+In addition, educational attainment is not uniformly distributed across the United States. Different states and regions have unique policies, cultural norms, and varying levels of access to higher education, all of which influence the number of individuals attaining doc degrees. Consequently, a ratio derived from California may not be applicable to other states, where the conditions that shape educational outcomes could be markedly different.
+
+Furthermore, there may be bias in the ratio estimator itself. The ratio estimator is most effective when the relationship between the characteristic of interest—in this case, the prevalence of doc degrees—and the population is consistent across all units. However, if the ratio of doc degree holders to the total population in California is not indicative of the situation in other states due to unobserved factors, then the estimates produced will be biased.
+
+These reasons collectively explain why the ratio estimators method often leads to differences between est and act respondent counts. The assumption of homogeneity, which underpins this method, can lead to inaccuracies when applied to a diverse population, such as the various states across the United States, each with its unique characteristics.
