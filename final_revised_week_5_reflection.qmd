@@ -1,7 +1,14 @@
 ---
 title: "Week 5 Reflection"
+author: 
+  - Wei Wang
+  - Chiyue Zhuang
+thanks: "Code and data are available at: [https://github.com/zcyjn233/Week-5-reflection)."
+date: today
+date-format: long
 format: pdf
-author: Chhiyue Zhuang, Wei Wang
+number-sections: true
+bibliography: references.bib
 ---
 
 ```{r}
