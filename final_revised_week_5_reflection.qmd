@@ -1,5 +1,5 @@
 ---
-title: "Week 5 Reflection"
+title: "Insights into Educational Trends Through Data Analysis"
 author: 
   - Wei Wang
   - Chiyue Zhuang
