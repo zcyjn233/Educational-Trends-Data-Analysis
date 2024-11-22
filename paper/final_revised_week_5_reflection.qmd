@@ -3,7 +3,7 @@ title: "Insights into Educational Trends Through Data Analysis"
 author: 
   - Wei Wang
   - Chiyue Zhuang
-thanks: "Code and data are available at: [https://github.com/zcyjn233/Week-5-reflection)."
+thanks: "Code and data are available at: [https://github.com/zcyjn233/Educational-Trends-Data-Analysis)."
 date: today
 date-format: long
 format: pdf
@@ -11,7 +11,8 @@ number-sections: true
 bibliography: references.bib
 ---
 
-```{r}
+```{r,echO=FALSE}
+#| echo: false
 library(haven)
 library(labelled)
 library(tidyverse)
@@ -27,7 +28,8 @@ ipums_data <- ipums_data |>
 
 Using the provided codebook, determine the number of respondents from each state (STATEICP) whose highest educational attainment was a doc degree (EDUC). Create a column in a tibble reflecting this.
 
-```{r}
+```{r,echO=FALSE}
+#| echo: false
 doc_counts <- ipums_data |>
   filter(educd == 116) |>
   group_by(stateicp) |>
@@ -53,7 +55,8 @@ To obtain the data from IPUMS USA:
 
 ### Your estimates and the act number of respondents
 
-```{r}
+```{r,echO=FALSE}
+#| echo: false
 total_respondents_california <- 391171
 
 doc_respondents_california <- doc_counts |>
@@ -89,3 +92,8 @@ In addition, educational attainment is not uniformly distributed across the Unit
 Furthermore, there may be bias in the ratio estimator itself. The ratio estimator is most effective when the relationship between the characteristic of interest—in this case, the prevalence of doc degrees—and the population is consistent across all units. However, if the ratio of doc degree holders to the total population in California is not indicative of the situation in other states due to unobserved factors, then the estimates produced will be biased.
 
 These reasons collectively explain why the ratio estimators method often leads to differences between est and act respondent counts. The assumption of homogeneity, which underpins this method, can lead to inaccuracies when applied to a diverse population, such as the various states across the United States, each with its unique characteristics.
+
+We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.date is from @citedata.
+\newpage
+
+# References
